@@ -19,32 +19,11 @@
   <body>
     <div class="grain"></div>
     <main class="page-shell">
-      <section class="hero">
-        <p class="eyebrow">Indian taxpayer visualizer</p>
-        <div class="hero-copy">
-          <h1>Where did my tax go?</h1>
-          <p class="lede">
-            Enter the amount of tax you paid and see an illustrative split based
-            on the Government of India’s Union Budget 2025-26 “Rupee Goes To”
-            allocation.
-          </p>
-        </div>
-        <div class="hero-note">
-          <p>
-            This is a Union Government view, not a full picture of how Indian
-            states, municipalities, or every specific tax rupee is spent.
-          </p>
-        </div>
-      </section>
-
-      <section class="calculator" aria-labelledby="calculator-title">
-        <div class="controls-panel">
-          <div class="section-head">
-            <p class="eyebrow">Calculator</p>
-            <h2 id="calculator-title">Tell me your tax number</h2>
-          </div>
-
-          <label class="input-label" for="tax-input">Tax paid in INR</label>
+      <section class="hero" aria-labelledby="page-title">
+        <p class="eyebrow">India tax breakdown</p>
+        <h1 id="page-title">Where did my tax go?</h1>
+        <div class="input-stack">
+          <label class="sr-only" for="tax-input">Tax paid in INR</label>
           <div class="input-row">
             <span class="currency-pill">Rs</span>
             <input
@@ -54,100 +33,35 @@
               inputmode="numeric"
               min="0"
               step="100"
-              value="100000"
-              aria-describedby="tax-help"
+              placeholder="Enter tax paid"
             />
           </div>
-          <input
-            id="tax-range"
-            type="range"
-            min="0"
-            max="1000000"
-            step="1000"
-            value="100000"
-            aria-label="Tax amount slider"
-          />
-          <p id="tax-help" class="helper">
-            Use income tax, GST, or your own estimate of total annual taxes.
-          </p>
-
           <div class="preset-row" aria-label="Preset amounts">
-            <button class="preset" data-amount="12000">Rs 12k</button>
-            <button class="preset" data-amount="50000">Rs 50k</button>
-            <button class="preset" data-amount="100000">Rs 1L</button>
-            <button class="preset" data-amount="500000">Rs 5L</button>
-          </div>
-
-          <div class="summary-card">
-            <p class="summary-label">You entered</p>
-            <p class="summary-value" id="total-tax">Rs 1,00,000</p>
-            <p class="summary-text" id="tax-rupee">
-              For every rupee, the Union Budget assigns 22 paise to state share
-              of taxes and duties.
-            </p>
+            <button class="preset" data-amount="12000">12k</button>
+            <button class="preset" data-amount="50000">50k</button>
+            <button class="preset" data-amount="100000">1 lakh</button>
+            <button class="preset" data-amount="500000">5 lakh</button>
           </div>
         </div>
+      </section>
 
-        <div class="viz-panel">
+      <section class="results is-hidden" id="results" aria-live="polite">
+        <div class="summary-strip">
+          <p class="summary-label">Tax entered</p>
+          <p class="summary-value" id="total-tax">Rs 0</p>
+        </div>
+
+        <div class="visual-panel">
           <div class="donut-wrap">
             <div class="donut" id="donut-chart" aria-hidden="true">
               <div class="donut-center">
-                <span class="donut-label">FY 2025-26</span>
-                <strong id="donut-total">Rs 1,00,000</strong>
+                <span class="donut-label">Breakdown</span>
+                <strong id="donut-total">Rs 0</strong>
               </div>
             </div>
           </div>
           <ol class="legend" id="legend-list" aria-label="Budget allocation"></ol>
         </div>
-      </section>
-
-      <section class="explainers">
-        <article class="info-card">
-          <p class="eyebrow">How to read this</p>
-          <h2>One rupee is split into 100 paise</h2>
-          <p>
-            The official budget infographic expresses expenditure as a rupee
-            broken into paise. This app applies the same percentages to your
-            number so the result stays intuitive.
-          </p>
-        </article>
-        <article class="info-card">
-          <p class="eyebrow">Important caveat</p>
-          <h2>Illustrative, not a personalized treasury ledger</h2>
-          <p>
-            Taxes are pooled. Your exact rupees are not individually tagged to a
-            ministry. This is a public-finance explainer built from official
-            aggregate budget shares.
-          </p>
-        </article>
-      </section>
-
-      <section class="sources" aria-labelledby="sources-title">
-        <p class="helper" id="source-intro"></p>
-        <div class="section-head">
-          <p class="eyebrow">Sources</p>
-          <h2 id="sources-title">Official Government references</h2>
-        </div>
-        <ul class="source-list">
-          <li>
-            <a
-              href="https://www.indiabudget.gov.in/budget2025-26/doc/Budget_at_Glance/bag1.pdf"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Union Budget 2025-26: Budget at a Glance PDF
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://www.indiabudget.gov.in/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              India Budget portal, Ministry of Finance
-            </a>
-          </li>
-        </ul>
       </section>
     </main>
 

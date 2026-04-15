@@ -2,56 +2,47 @@ const breakdown = [
   {
     label: "State share of taxes and duties",
     share: 22,
-    color: "#d9652b",
-    description: "Devolution transferred to states from the divisible tax pool."
+    color: "#cf9363"
   },
   {
     label: "Interest payments",
     share: 20,
-    color: "#ba4a1b",
-    description: "Servicing past borrowings."
+    color: "#ba6e42"
   },
   {
     label: "Central sector schemes",
     share: 16,
-    color: "#e59354",
-    description: "Union-run schemes, excluding defence capital outlay and major subsidies."
+    color: "#deb07c"
   },
   {
     label: "Defence",
     share: 8,
-    color: "#264653",
-    description: "Defence services and related expenditure."
+    color: "#7b8c96"
   },
   {
     label: "Finance Commission and other transfers",
     share: 8,
-    color: "#2a9d8f",
-    description: "Transfers recommended or routed to states and other authorities."
+    color: "#6f8a82"
   },
   {
     label: "Other expenditure",
     share: 8,
-    color: "#457b9d",
-    description: "Residual expenditure heads outside the highlighted buckets."
+    color: "#6c7794"
   },
   {
     label: "Centrally sponsored schemes",
     share: 8,
-    color: "#8d99ae",
-    description: "Schemes jointly implemented with states."
+    color: "#8e8a9f"
   },
   {
     label: "Major subsidies",
     share: 6,
-    color: "#f4a261",
-    description: "Food, fertilizer, and petroleum-related subsidy support."
+    color: "#b78865"
   },
   {
     label: "Pensions",
     share: 4,
-    color: "#e9c46a",
-    description: "Pension obligations."
+    color: "#a89a74"
   }
 ];
 
@@ -61,45 +52,27 @@ const currencyFormatter = new Intl.NumberFormat("en-IN", {
   maximumFractionDigits: 0
 });
 
-const compactFormatter = new Intl.NumberFormat("en-IN", {
-  maximumFractionDigits: 1
-});
-
 const taxInput = document.querySelector("#tax-input");
-const taxRange = document.querySelector("#tax-range");
 const totalTax = document.querySelector("#total-tax");
 const donutTotal = document.querySelector("#donut-total");
 const donutChart = document.querySelector("#donut-chart");
 const legendList = document.querySelector("#legend-list");
-const taxRupee = document.querySelector("#tax-rupee");
 const presetButtons = document.querySelectorAll(".preset");
-const sourceIntro = document.querySelector("#source-intro");
+const results = document.querySelector("#results");
 
 function formatCurrency(value) {
   return currencyFormatter.format(value).replace("₹", "Rs ");
 }
 
-function formatCompact(value) {
-  if (value >= 10000000) {
-    return `${compactFormatter.format(value / 10000000)} crore`;
-  }
-
-  if (value >= 100000) {
-    return `${compactFormatter.format(value / 100000)} lakh`;
-  }
-
-  if (value >= 1000) {
-    return `${compactFormatter.format(value / 1000)} thousand`;
-  }
-
-  return `${compactFormatter.format(value)}`;
-}
-
 function clampTaxAmount(rawValue) {
+  if (rawValue === "") {
+    return null;
+  }
+
   const parsed = Number(rawValue);
 
   if (!Number.isFinite(parsed) || parsed < 0) {
-    return 0;
+    return null;
   }
 
   return Math.min(parsed, 1000000000);
@@ -123,11 +96,25 @@ function itemAmount(total, share) {
 
 function updateQueryParam(total) {
   const url = new URL(window.location.href);
-  url.searchParams.set("tax", String(total));
+
+  if (total === null) {
+    url.searchParams.delete("tax");
+  } else {
+    url.searchParams.set("tax", String(total));
+  }
+
   window.history.replaceState({}, "", url);
 }
 
 function render(total) {
+  if (total === null) {
+    results.classList.add("is-hidden");
+    legendList.innerHTML = "";
+    updateQueryParam(null);
+    return;
+  }
+
+  results.classList.remove("is-hidden");
   totalTax.textContent = formatCurrency(total);
   donutTotal.textContent = formatCurrency(total);
   donutChart.style.setProperty("--segments", buildSegments());
@@ -141,7 +128,6 @@ function render(total) {
       <span class="swatch" style="background:${item.color}"></span>
       <div>
         <p class="legend-title">${item.label}</p>
-        <p class="legend-copy">${item.description}</p>
       </div>
       <div>
         <span class="legend-share">${item.share} paise</span>
@@ -152,17 +138,11 @@ function render(total) {
     legendList.appendChild(listItem);
   });
 
-  const lead = breakdown[0];
-  const leadAmount = itemAmount(total, lead.share);
-  taxRupee.textContent = `For every rupee, the Union Budget assigns ${lead.share} paise to ${lead.label.toLowerCase()}. In your case that is ${formatCurrency(leadAmount)}.`;
-  sourceIntro.textContent = `Illustrative amount: ${formatCompact(total)} in taxes mapped to official Union Budget FY 2025-26 shares.`;
-
   updateQueryParam(total);
 }
 
 function syncInput(total) {
-  taxInput.value = String(total);
-  taxRange.value = String(Math.min(total, Number(taxRange.max)));
+  taxInput.value = total === null ? "" : String(total);
   render(total);
 }
 
@@ -175,14 +155,13 @@ function readInitialTax() {
   const fromQuery = url.searchParams.get("tax");
 
   if (!fromQuery) {
-    return 100000;
+    return null;
   }
 
   return clampTaxAmount(fromQuery);
 }
 
 taxInput.addEventListener("input", onInput);
-taxRange.addEventListener("input", onInput);
 
 presetButtons.forEach((button) => {
   button.addEventListener("click", () => {
