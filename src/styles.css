@@ -124,10 +124,17 @@ h1 {
   color: var(--text);
   font: inherit;
   font-size: clamp(1.05rem, 2.6vw, 1.35rem);
+  appearance: textfield;
 }
 
 #tax-input::placeholder {
   color: #857d74;
+}
+
+#tax-input::-webkit-outer-spin-button,
+#tax-input::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
 }
 
 .preset-row {
@@ -210,40 +217,87 @@ h1 {
 }
 
 .donut-wrap {
-  display: grid;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   place-items: center;
   padding: 0.5rem 0 1rem;
 }
 
-.donut {
+.chart-shell {
   position: relative;
   width: min(22rem, 70vw);
   aspect-ratio: 1;
-  border-radius: 50%;
-  background: conic-gradient(var(--segments));
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 
-.donut::before {
+.donut-chart {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.chart-slice {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(var(--slice-scale, 1));
+  transition:
+    transform 180ms ease,
+    filter 180ms ease,
+    opacity 180ms ease;
+  cursor: pointer;
+}
+
+.donut-chart.is-dimmed .chart-slice {
+  opacity: 0.35;
+}
+
+.donut-chart.is-dimmed .chart-slice.is-active {
+  opacity: 1;
+  filter: brightness(0.78);
+}
+
+.donut-wrap::before {
   content: "";
   position: absolute;
-  inset: 22%;
+  width: min(9.7rem, 32vw);
+  aspect-ratio: 1;
   border-radius: 50%;
   background: #1b1b1b;
   border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.02);
 }
 
 .donut-center {
   position: absolute;
-  inset: 0;
   z-index: 1;
   display: grid;
   place-content: center;
   text-align: center;
+  pointer-events: none;
 }
 
 .donut-center strong {
   font-size: clamp(1.1rem, 3vw, 1.8rem);
+}
+
+.chart-tooltip {
+  position: absolute;
+  z-index: 2;
+  max-width: 16rem;
+  padding: 0.7rem 0.85rem;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(10, 10, 10, 0.92);
+  color: var(--text);
+  font-size: 0.86rem;
+  line-height: 1.5;
+  pointer-events: none;
+  white-space: normal;
+}
+
+.chart-tooltip.is-hidden {
+  display: none;
 }
 
 .legend {
@@ -256,14 +310,19 @@ h1 {
 
 .legend li {
   display: grid;
-  grid-template-columns: auto 1fr auto;
   gap: 0.9rem;
-  align-items: center;
   padding: 0.95rem 1rem;
   border-radius: var(--radius-md);
   border: 1px solid var(--line);
   background: var(--panel-soft);
   animation: fade-up 500ms ease both;
+}
+
+.legend-top {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.9rem;
+  align-items: center;
 }
 
 .swatch {
@@ -273,7 +332,9 @@ h1 {
 }
 
 .legend-title,
-.legend-value {
+.legend-value,
+.legend-percent,
+.ministry-note {
   margin: 0;
 }
 
@@ -283,7 +344,98 @@ h1 {
 
 .legend-value {
   font-weight: 700;
+}
+
+.legend-percent {
+  font-size: 0.9rem;
   text-align: right;
+  color: var(--muted);
+}
+
+.legend-copy {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.progress-track {
+  width: 100%;
+  height: 0.42rem;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #cf9363 0%, #e6c6a8 100%);
+}
+
+.analysis-grid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.analysis-panel {
+  padding: 1.1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.analysis-head {
+  margin-bottom: 1rem;
+}
+
+.analysis-head h2,
+.federal-card h3 {
+  margin: 0;
+  font-weight: 500;
+}
+
+.federal-cards,
+.ministry-list {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.federal-card,
+.ministry-row {
+  display: grid;
+  gap: 0.7rem;
+  padding: 0.95rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--panel-soft);
+}
+
+.federal-amount {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.federal-meta,
+.ministry-metrics {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--muted);
+}
+
+.ministry-top {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.ministry-note {
+  color: var(--muted);
+  font-size: 0.9rem;
 }
 
 .sr-only {
@@ -306,6 +458,10 @@ h1 {
   .visual-panel {
     grid-template-columns: minmax(18rem, 25rem) 1fr;
     align-items: start;
+  }
+
+  .analysis-grid {
+    grid-template-columns: 0.9fr 1.1fr;
   }
 
   .summary-strip {

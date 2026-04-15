@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildAllocation, buildSegments, clampTaxAmount, readTaxFromLocation } from "../src/lib/tax.js";
+import { buildAllocation, buildArcPath, clampTaxAmount, formatCurrency, ministryShareFromCrore, readTaxFromLocation } from "../src/lib/tax.js";
 
 describe("clampTaxAmount", () => {
   it("returns null for empty input", () => {
@@ -33,14 +33,26 @@ describe("buildAllocation", () => {
   });
 });
 
-describe("buildSegments", () => {
-  it("returns a conic gradient segment string", () => {
-    expect(buildSegments()).toContain("#cf9363 0% 22%");
+describe("formatCurrency", () => {
+  it("formats with rupees and decimals", () => {
+    expect(formatCurrency(22)).toBe("Rs 22.00");
   });
 });
 
 describe("readTaxFromLocation", () => {
   it("reads tax from the query string", () => {
     expect(readTaxFromLocation({ href: "https://example.com/india-tax-rupee/?tax=100000" })).toBe(100000);
+  });
+});
+
+describe("ministryShareFromCrore", () => {
+  it("converts ministry totals to shares of the full budget", () => {
+    expect(ministryShareFromCrore(50653.45)).toBeCloseTo(1, 4);
+  });
+});
+
+describe("buildArcPath", () => {
+  it("returns an svg path string", () => {
+    expect(buildArcPath(0, 22)).toContain("A 96 96");
   });
 });
