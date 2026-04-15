@@ -1,4 +1,4 @@
-import { breakdown, totalExpenditureCrore } from "../data/breakdown.js";
+import { breakdown, detailAllocations, totalExpenditureCrore } from "../data/breakdown.js";
 
 export const MAX_TAX_AMOUNT = 1000000000;
 
@@ -31,18 +31,6 @@ export function formatPercent(value) {
   return `${value.toFixed(2)}%`;
 }
 
-export function buildSegments() {
-  let current = 0;
-
-  return breakdown
-    .map((item) => {
-      const start = current;
-      current += item.share;
-      return `${item.color} ${start}% ${current}%`;
-    })
-    .join(", ");
-}
-
 export function itemAmount(total, share) {
   return Math.round((total * share) / 100);
 }
@@ -61,6 +49,25 @@ export function mapBudgetShareToAmount(total, share) {
 
 export function ministryShareFromCrore(amountCrore) {
   return (amountCrore / totalExpenditureCrore) * 100;
+}
+
+export function detailShare(item) {
+  return item.share ?? ministryShareFromCrore(item.amountCrore);
+}
+
+export function detailAmount(total, item) {
+  return mapBudgetShareToAmount(total, detailShare(item));
+}
+
+export function buildDetailAllocations(total, group) {
+  return detailAllocations
+    .filter((item) => item.group === group)
+    .map((item) => ({
+      ...item,
+      percent: detailShare(item),
+      amount: detailAmount(total, item)
+    }))
+    .sort((left, right) => right.percent - left.percent);
 }
 
 export function buildArcPath(startPercent, endPercent, outerRadius = 96, innerRadius = 56) {
@@ -93,13 +100,35 @@ export function readTaxFromLocation(locationLike) {
   return clampTaxAmount(url.searchParams.get("tax"));
 }
 
-export function writeTaxToHistory(total, locationLike, historyLike) {
+export function readAppState(locationLike) {
   const url = new URL(locationLike.href);
 
-  if (total === null) {
+  return {
+    tax: clampTaxAmount(url.searchParams.get("tax")),
+    type: url.searchParams.get("type") ?? "income-tax",
+    snapshot: url.searchParams.get("snapshot") === "1"
+  };
+}
+
+export function writeAppStateToHistory(state, locationLike, historyLike) {
+  const url = new URL(locationLike.href);
+
+  if (state.tax === null) {
     url.searchParams.delete("tax");
   } else {
-    url.searchParams.set("tax", String(total));
+    url.searchParams.set("tax", String(state.tax));
+  }
+
+  if (state.type && state.type !== "income-tax") {
+    url.searchParams.set("type", state.type);
+  } else {
+    url.searchParams.delete("type");
+  }
+
+  if (state.snapshot) {
+    url.searchParams.set("snapshot", "1");
+  } else {
+    url.searchParams.delete("snapshot");
   }
 
   historyLike.replaceState({}, "", url);

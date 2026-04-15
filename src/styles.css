@@ -52,6 +52,21 @@ body::before {
   padding: 6rem 0 4rem;
 }
 
+body.snapshot-mode .page-shell {
+  padding-top: 2rem;
+}
+
+body.snapshot-mode .hero {
+  max-width: 100%;
+}
+
+body.snapshot-mode .preset-row,
+body.snapshot-mode .mode-helper,
+body.snapshot-mode .methodology,
+body.snapshot-mode .analysis-grid {
+  display: none;
+}
+
 .hero,
 .results {
   position: relative;
@@ -78,13 +93,71 @@ body::before {
   color: var(--muted);
 }
 
-h1 {
+h1,
+.analysis-head h2,
+.federal-card h3 {
   margin: 0;
+}
+
+h1 {
   font-family: "Instrument Serif", serif;
   font-size: clamp(3.6rem, 11vw, 6.6rem);
   font-weight: 400;
   line-height: 0.95;
   letter-spacing: -0.04em;
+}
+
+.mode-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.7rem;
+  margin-top: 1.3rem;
+}
+
+.mode-chip,
+.preset,
+.group-tab,
+.action-button,
+.toggle-button {
+  padding: 0.72rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+  transition:
+    background 180ms ease,
+    color 180ms ease,
+    transform 180ms ease,
+    border-color 180ms ease;
+}
+
+.mode-chip[aria-selected="true"],
+.group-tab[aria-selected="true"] {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.mode-chip:hover,
+.preset:hover,
+.group-tab:hover,
+.action-button:hover,
+.toggle-button:hover {
+  transform: translateY(-1px);
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.mode-helper {
+  margin: 1rem auto 0;
+  max-width: 38rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 .input-stack {
@@ -145,30 +218,12 @@ h1 {
   margin-top: 1rem;
 }
 
-.preset {
-  padding: 0.72rem 1rem;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: transparent;
-  color: var(--muted);
-  font: inherit;
-  cursor: pointer;
-  transition:
-    background 180ms ease,
-    color 180ms ease,
-    transform 180ms ease,
-    border-color 180ms ease;
-}
-
-.preset:hover {
-  transform: translateY(-1px);
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.12);
-}
-
 #tax-input:focus-visible,
-.preset:focus-visible {
+.preset:focus-visible,
+.mode-chip:focus-visible,
+.action-button:focus-visible,
+.group-tab:focus-visible,
+.toggle-button:focus-visible {
   outline: 2px solid rgba(207, 147, 99, 0.45);
   outline-offset: 3px;
 }
@@ -177,7 +232,6 @@ h1 {
   margin-top: 1.25rem;
   padding: 1.5rem;
   border-radius: var(--radius-xl);
-  transform-origin: top center;
   animation: fade-up 700ms ease both;
 }
 
@@ -189,6 +243,7 @@ h1 {
   display: flex;
   align-items: end;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 1rem;
   margin-bottom: 1.3rem;
   padding-bottom: 1rem;
@@ -211,6 +266,12 @@ h1 {
   font-weight: 700;
 }
 
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
 .visual-panel {
   display: grid;
   gap: 1.25rem;
@@ -221,7 +282,6 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  place-items: center;
   padding: 0.5rem 0 1rem;
 }
 
@@ -293,7 +353,6 @@ h1 {
   font-size: 0.86rem;
   line-height: 1.5;
   pointer-events: none;
-  white-space: normal;
 }
 
 .chart-tooltip.is-hidden {
@@ -308,14 +367,22 @@ h1 {
   gap: 0.75rem;
 }
 
-.legend li {
+.legend li,
+.federal-card,
+.ministry-row,
+.analysis-panel,
+.methodology {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.legend li,
+.federal-card,
+.ministry-row {
   display: grid;
   gap: 0.9rem;
   padding: 0.95rem 1rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--line);
-  background: var(--panel-soft);
-  animation: fade-up 500ms ease both;
 }
 
 .legend-top {
@@ -334,7 +401,8 @@ h1 {
 .legend-title,
 .legend-value,
 .legend-percent,
-.ministry-note {
+.ministry-note,
+.federal-amount {
   margin: 0;
 }
 
@@ -342,7 +410,8 @@ h1 {
   font-weight: 500;
 }
 
-.legend-value {
+.legend-value,
+.federal-amount {
   font-weight: 700;
 }
 
@@ -378,11 +447,9 @@ h1 {
   margin-top: 1.5rem;
 }
 
-.analysis-panel {
+.analysis-panel,
+.methodology {
   padding: 1.1rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.025);
 }
 
 .analysis-head {
@@ -393,69 +460,37 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 1rem;
 }
 
-.analysis-head h2,
-.federal-card h3 {
-  margin: 0;
-  font-weight: 500;
-}
-
-.toggle-button {
-  padding: 0.6rem 0.9rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--muted);
-  font: inherit;
-  cursor: pointer;
-  transition:
-    background 180ms ease,
-    color 180ms ease,
-    border-color 180ms ease;
-}
-
-.toggle-button:hover,
-.toggle-button:focus-visible {
-  color: var(--text);
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.12);
-}
-
 .federal-cards,
+.group-tabs,
 .ministry-list {
   display: grid;
   gap: 0.8rem;
 }
 
-.ministry-list {
+.group-tabs {
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  margin-bottom: 0.9rem;
+}
+
+.detail-panel {
   overflow: hidden;
   transition:
     max-height 260ms ease,
     opacity 220ms ease;
 }
 
-.ministry-list.is-collapsed {
+.detail-panel.is-collapsed {
   max-height: 0;
   opacity: 0;
   pointer-events: none;
 }
 
-.federal-card,
-.ministry-row {
-  display: grid;
-  gap: 0.7rem;
-  padding: 0.95rem 1rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--line);
-  background: var(--panel-soft);
-}
-
 .federal-amount {
-  margin: 0;
   font-size: 1.2rem;
-  font-weight: 700;
 }
 
 .federal-meta,
@@ -474,9 +509,22 @@ h1 {
   gap: 1rem;
 }
 
-.ministry-note {
+.ministry-note,
+.methodology-body {
   color: var(--muted);
-  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.methodology {
+  margin-top: 1.5rem;
+}
+
+.methodology summary {
+  cursor: pointer;
+}
+
+.methodology a {
+  color: var(--text);
 }
 
 .sr-only {
@@ -503,10 +551,6 @@ h1 {
 
   .analysis-grid {
     grid-template-columns: 0.9fr 1.1fr;
-  }
-
-  .summary-strip {
-    margin-bottom: 1.5rem;
   }
 }
 

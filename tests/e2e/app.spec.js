@@ -15,10 +15,17 @@ test("shows and hides ministry detail", async ({ page }) => {
 
   const toggle = page.getByRole("button", { name: "Show detail" });
   await expect(toggle).toBeVisible();
-  await expect(page.locator("#ministry-list")).toHaveClass(/is-collapsed/);
+  await expect(page.locator("#detail-panel")).toHaveClass(/is-collapsed/);
 
   await toggle.click();
 
-  await expect(page.locator("#ministry-list")).not.toHaveClass(/is-collapsed/);
-  await expect(page.locator("#ministry-list .ministry-row").nth(1)).toContainText("Road Transport and Highways");
+  await expect(page.locator("#detail-panel")).not.toHaveClass(/is-collapsed/);
+  await expect(page.locator("#ministry-list .ministry-row").first()).toContainText("State share of taxes and duties");
+});
+
+test("supports category mode and snapshot query params", async ({ page }) => {
+  await page.goto("/?tax=100000&type=gst-estimate&snapshot=1");
+
+  await expect(page.getByRole("tab", { name: "GST Estimate" })).toHaveAttribute("aria-selected", "true");
+  await expect(page.locator("body")).toHaveClass(/snapshot-mode/);
 });

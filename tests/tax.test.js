@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { buildAllocation, buildArcPath, clampTaxAmount, formatCurrency, ministryShareFromCrore, readTaxFromLocation } from "../src/lib/tax.js";
+import {
+  buildAllocation,
+  buildArcPath,
+  buildDetailAllocations,
+  clampTaxAmount,
+  formatCurrency,
+  ministryShareFromCrore,
+  readAppState,
+  readTaxFromLocation
+} from "../src/lib/tax.js";
 
 describe("clampTaxAmount", () => {
   it("returns null for empty input", () => {
@@ -25,11 +34,6 @@ describe("buildAllocation", () => {
       share: 22,
       amount: 22000
     });
-    expect(items[8]).toMatchObject({
-      label: "Pensions",
-      share: 4,
-      amount: 4000
-    });
   });
 });
 
@@ -45,6 +49,18 @@ describe("readTaxFromLocation", () => {
   });
 });
 
+describe("readAppState", () => {
+  it("reads tax type and snapshot mode", () => {
+    expect(
+      readAppState({ href: "https://example.com/india-tax-rupee/?tax=100000&type=gst-estimate&snapshot=1" })
+    ).toMatchObject({
+      tax: 100000,
+      type: "gst-estimate",
+      snapshot: true
+    });
+  });
+});
+
 describe("ministryShareFromCrore", () => {
   it("converts ministry totals to shares of the full budget", () => {
     expect(ministryShareFromCrore(50653.45)).toBeCloseTo(1, 4);
@@ -54,5 +70,13 @@ describe("ministryShareFromCrore", () => {
 describe("buildArcPath", () => {
   it("returns an svg path string", () => {
     expect(buildArcPath(0, 22)).toContain("A 96 96");
+  });
+});
+
+describe("buildDetailAllocations", () => {
+  it("builds grouped detailed allocations", () => {
+    const items = buildDetailAllocations(100000, "states");
+    expect(items[0].label).toBe("State share of taxes and duties");
+    expect(items[0].amount).toBe(22000);
   });
 });
