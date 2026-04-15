@@ -8,6 +8,7 @@ import {
   formatCurrency,
   formatPercent,
   mapBudgetShareToAmount,
+  modeledTaxAmount,
   readAppState,
   writeAppStateToHistory
 } from "./lib/tax.js";
@@ -49,6 +50,7 @@ app.innerHTML = `
         <div>
           <p class="summary-label">Tax entered</p>
           <p class="summary-value" id="total-tax">Rs 0.00</p>
+          <p class="summary-subtext" id="mode-summary"></p>
         </div>
         <div class="action-row">
           <button class="action-button" id="copy-link" type="button">Copy link</button>
@@ -135,6 +137,7 @@ const state = {
 
 const taxInput = document.querySelector("#tax-input");
 const totalTax = document.querySelector("#total-tax");
+const modeSummary = document.querySelector("#mode-summary");
 const donutTotal = document.querySelector("#donut-total");
 const donutChart = document.querySelector("#donut-chart");
 const legendList = document.querySelector("#legend-list");
@@ -152,18 +155,6 @@ const snapshotToggle = document.querySelector("#snapshot-toggle");
 const copyLinkButton = document.querySelector("#copy-link");
 const downloadCardButton = document.querySelector("#download-card");
 const groupTabs = document.querySelector("#group-tabs");
-
-function currentUrlState() {
-  return {
-    tax: state.tax,
-    type: state.type,
-    snapshot: state.snapshot
-  };
-}
-
-function writeUrlState() {
-  writeAppStateToHistory(currentUrlState(), window.location, window.history);
-}
 
 function animateNumber(element, start, end, duration = 360) {
   const startedAt = performance.now();
@@ -194,7 +185,6 @@ function setSnapshotMode(enabled) {
   state.snapshot = enabled;
   document.body.classList.toggle("snapshot-mode", enabled);
   snapshotToggle.textContent = enabled ? "Exit snapshot" : "Snapshot mode";
-  writeUrlState();
 }
 
 function renderModeSwitcher() {
@@ -210,7 +200,7 @@ function renderModeSwitcher() {
     button.addEventListener("click", () => {
       state.type = mode.id;
       renderModeSwitcher();
-      writeUrlState();
+      render(state.tax);
     });
     modeSwitcher.appendChild(button);
   }
@@ -421,7 +411,7 @@ function renderDetails(total) {
 
 async function copyShareLink() {
   try {
-    await navigator.clipboard.writeText(window.location.href);
+    await navigator.clipboard.writeText(window.location.origin + window.location.pathname);
     copyLinkButton.textContent = "Copied";
   } catch {
     copyLinkButton.textContent = "Copy failed";
@@ -484,25 +474,34 @@ function downloadSnapshot(total) {
 }
 
 function render(total) {
+  const modeledTotal = modeledTaxAmount(total, state.type);
+
   if (total === null) {
     results.classList.add("is-hidden");
     legendList.innerHTML = "";
     donutChart.innerHTML = "";
     federalCards.innerHTML = "";
     ministryList.innerHTML = "";
-    writeUrlState();
     return;
   }
 
   results.classList.remove("is-hidden");
   animateNumber(totalTax, state.previousTax, total);
-  animateNumber(donutTotal, state.previousTax, total);
-  renderChart(total);
-  renderLegend(total);
-  renderFederal(total);
-  renderGroupTabs(total);
-  renderDetails(total);
-  writeUrlState();
+  animateNumber(donutTotal, modeledTaxAmount(state.previousTax, state.type) ?? 0, modeledTotal);
+
+  if (state.type === "income-tax") {
+    modeSummary.textContent = "Income tax mode models 100% of the amount you entered.";
+  } else if (state.type === "gst-estimate") {
+    modeSummary.textContent = `GST estimate mode models ${formatCurrency(modeledTotal)} as the Union-facing share, using a 50% CGST-style approximation.`;
+  } else {
+    modeSummary.textContent = `Custom estimate mode models ${formatCurrency(modeledTotal)} using a 75% mixed-tax approximation.`;
+  }
+
+  renderChart(modeledTotal);
+  renderLegend(modeledTotal);
+  renderFederal(modeledTotal);
+  renderGroupTabs(modeledTotal);
+  renderDetails(modeledTotal);
   state.previousTax = total;
 }
 

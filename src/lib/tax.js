@@ -1,6 +1,11 @@
 import { breakdown, detailAllocations, totalExpenditureCrore } from "../data/breakdown.js";
 
 export const MAX_TAX_AMOUNT = 1000000000;
+export const MODE_MULTIPLIERS = {
+  "income-tax": 1,
+  "gst-estimate": 0.5,
+  custom: 0.75
+};
 
 export function clampTaxAmount(rawValue) {
   if (rawValue === "" || rawValue === null || rawValue === undefined) {
@@ -68,6 +73,15 @@ export function buildDetailAllocations(total, group) {
       amount: detailAmount(total, item)
     }))
     .sort((left, right) => right.percent - left.percent);
+}
+
+export function modeledTaxAmount(total, type) {
+  if (total === null) {
+    return null;
+  }
+
+  const multiplier = MODE_MULTIPLIERS[type] ?? 1;
+  return total * multiplier;
 }
 
 export function buildArcPath(startPercent, endPercent, outerRadius = 96, innerRadius = 56) {

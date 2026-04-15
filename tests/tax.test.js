@@ -5,6 +5,7 @@ import {
   buildDetailAllocations,
   clampTaxAmount,
   formatCurrency,
+  modeledTaxAmount,
   ministryShareFromCrore,
   readAppState,
   readTaxFromLocation
@@ -78,5 +79,13 @@ describe("buildDetailAllocations", () => {
     const items = buildDetailAllocations(100000, "states");
     expect(items[0].label).toBe("State share of taxes and duties");
     expect(items[0].amount).toBe(22000);
+  });
+});
+
+describe("modeledTaxAmount", () => {
+  it("changes modeled amount by mode", () => {
+    expect(modeledTaxAmount(100000, "income-tax")).toBe(100000);
+    expect(modeledTaxAmount(100000, "gst-estimate")).toBe(50000);
+    expect(modeledTaxAmount(100000, "custom")).toBe(75000);
   });
 });

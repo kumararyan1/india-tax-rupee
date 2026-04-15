@@ -29,3 +29,19 @@ test("supports category mode and snapshot query params", async ({ page }) => {
   await expect(page.getByRole("tab", { name: "GST Estimate" })).toHaveAttribute("aria-selected", "true");
   await expect(page.locator("body")).toHaveClass(/snapshot-mode/);
 });
+
+test("mode switch changes modeled results without changing the url", async ({ page }) => {
+  await page.goto("/");
+
+  await page.locator("#tax-input").fill("100000");
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.locator("#donut-total")).toHaveText("Rs 1,00,000.00");
+
+  await page.getByRole("tab", { name: "GST Estimate" }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.locator("#donut-total")).toHaveText("Rs 50,000.00");
+
+  await page.getByRole("tab", { name: "Custom Estimate" }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.locator("#donut-total")).toHaveText("Rs 75,000.00");
+});

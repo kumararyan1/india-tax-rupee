@@ -266,6 +266,14 @@ h1 {
   font-weight: 700;
 }
 
+.summary-subtext {
+  margin: 0.45rem 0 0;
+  max-width: 34rem;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
 .action-row {
   display: flex;
   flex-wrap: wrap;
@@ -338,7 +346,10 @@ h1 {
 }
 
 .donut-center strong {
-  font-size: clamp(1.1rem, 3vw, 1.8rem);
+  max-width: 7ch;
+  font-size: clamp(0.9rem, 2.2vw, 1.3rem);
+  line-height: 1.2;
+  text-wrap: balance;
 }
 
 .chart-tooltip {
