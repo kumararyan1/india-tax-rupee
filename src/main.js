@@ -74,9 +74,20 @@ app.innerHTML = `
         <section class="analysis-panel" aria-labelledby="ministry-title">
           <div class="analysis-head">
             <p class="summary-label">Major allocations</p>
-            <h2 id="ministry-title">Ministries and departments</h2>
+            <div class="analysis-title-row">
+              <h2 id="ministry-title">Ministries and departments</h2>
+              <button
+                class="toggle-button"
+                id="ministry-toggle"
+                type="button"
+                aria-expanded="false"
+                aria-controls="ministry-list"
+              >
+                Show detail
+              </button>
+            </div>
           </div>
-          <div class="ministry-list" id="ministry-list"></div>
+          <div class="ministry-list is-collapsed" id="ministry-list"></div>
         </section>
       </div>
     </section>
@@ -93,6 +104,7 @@ const results = document.querySelector("#results");
 const chartTooltip = document.querySelector("#chart-tooltip");
 const federalCards = document.querySelector("#federal-cards");
 const ministryList = document.querySelector("#ministry-list");
+const ministryToggle = document.querySelector("#ministry-toggle");
 
 function getSliceScale(index, activeIndex) {
   if (activeIndex === null) {
@@ -259,5 +271,12 @@ for (const button of presetButtons) {
     syncInput(clampTaxAmount(button.dataset.amount));
   });
 }
+
+ministryToggle.addEventListener("click", () => {
+  const isExpanded = ministryToggle.getAttribute("aria-expanded") === "true";
+  ministryToggle.setAttribute("aria-expanded", String(!isExpanded));
+  ministryToggle.textContent = isExpanded ? "Show detail" : "Hide detail";
+  ministryList.classList.toggle("is-collapsed", isExpanded);
+});
 
 syncInput(readTaxFromLocation(window.location));

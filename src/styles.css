@@ -389,16 +389,57 @@ h1 {
   margin-bottom: 1rem;
 }
 
+.analysis-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
 .analysis-head h2,
 .federal-card h3 {
   margin: 0;
   font-weight: 500;
 }
 
+.toggle-button {
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+  transition:
+    background 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease;
+}
+
+.toggle-button:hover,
+.toggle-button:focus-visible {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
 .federal-cards,
 .ministry-list {
   display: grid;
   gap: 0.8rem;
+}
+
+.ministry-list {
+  overflow: hidden;
+  transition:
+    max-height 260ms ease,
+    opacity 220ms ease;
+}
+
+.ministry-list.is-collapsed {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .federal-card,
