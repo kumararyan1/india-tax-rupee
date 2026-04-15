@@ -5,10 +5,8 @@
   --line: rgba(255, 255, 255, 0.08);
   --text: #f3eee6;
   --muted: #b4ada3;
-  --accent: #cf9363;
   --shadow: 0 30px 90px rgba(0, 0, 0, 0.34);
   --radius-xl: 36px;
-  --radius-lg: 26px;
   --radius-md: 18px;
 }
 
@@ -31,7 +29,8 @@ body {
     linear-gradient(180deg, #111111 0%, #181818 100%);
 }
 
-.grain {
+body::before {
+  content: "";
   position: fixed;
   inset: 0;
   pointer-events: none;
@@ -41,6 +40,10 @@ body {
     linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 14px 14px;
   mask-image: radial-gradient(circle at center, black, transparent 90%);
+}
+
+#app {
+  position: relative;
 }
 
 .page-shell {

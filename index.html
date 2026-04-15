@@ -14,57 +14,9 @@
       href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div class="grain"></div>
-    <main class="page-shell">
-      <section class="hero" aria-labelledby="page-title">
-        <p class="eyebrow">India tax breakdown</p>
-        <h1 id="page-title">Where did my tax go?</h1>
-        <div class="input-stack">
-          <label class="sr-only" for="tax-input">Tax paid in INR</label>
-          <div class="input-row">
-            <span class="currency-pill">Rs</span>
-            <input
-              id="tax-input"
-              name="tax-input"
-              type="number"
-              inputmode="numeric"
-              min="0"
-              step="100"
-              placeholder="Enter tax paid"
-            />
-          </div>
-          <div class="preset-row" aria-label="Preset amounts">
-            <button class="preset" data-amount="12000">12k</button>
-            <button class="preset" data-amount="50000">50k</button>
-            <button class="preset" data-amount="100000">1 lakh</button>
-            <button class="preset" data-amount="500000">5 lakh</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="results is-hidden" id="results" aria-live="polite">
-        <div class="summary-strip">
-          <p class="summary-label">Tax entered</p>
-          <p class="summary-value" id="total-tax">Rs 0</p>
-        </div>
-
-        <div class="visual-panel">
-          <div class="donut-wrap">
-            <div class="donut" id="donut-chart" aria-hidden="true">
-              <div class="donut-center">
-                <span class="donut-label">Breakdown</span>
-                <strong id="donut-total">Rs 0</strong>
-              </div>
-            </div>
-          </div>
-          <ol class="legend" id="legend-list" aria-label="Budget allocation"></ol>
-        </div>
-      </section>
-    </main>
-
-    <script src="./script.js"></script>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
   </body>
 </html>

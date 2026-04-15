@@ -1,30 +1,39 @@
 # Where Did My Tax Go? India
 
-A lightweight static web app that shows how an Indian taxpayer's entered tax amount maps to the Government of India's Union Budget 2025-26 expenditure split.
+A minimal Vite-based web app that shows how a tax amount maps to the Indian Union Budget 2025-26 expenditure split.
 
-## Data source
+## Stack
 
-The budget split is based on the Ministry of Finance's official `Budget at a Glance 2025-26` infographic, specifically the `Rupee Goes To` allocation:
+- Vite for local development and production builds
+- Vanilla JavaScript modules for the UI and tax calculation logic
+- Vitest for calculation tests
+- GitHub Actions for GitHub Pages deployment
 
-- State share of taxes and duties: 22%
-- Interest payments: 20%
-- Central sector schemes: 16%
-- Defence: 8%
-- Finance Commission and other transfers: 8%
-- Other expenditure: 8%
-- Centrally sponsored schemes: 8%
-- Major subsidies: 6%
-- Pensions: 4%
+## Project structure
 
-Source links:
-
-- https://www.indiabudget.gov.in/budget2025-26/doc/Budget_at_Glance/bag1.pdf
-- https://www.indiabudget.gov.in/
+- `src/main.js` renders the app and wires events
+- `src/lib/tax.js` contains the testable tax/query helpers
+- `src/data/breakdown.js` contains the budget split data
+- `tests/tax.test.js` verifies the core calculation and query parsing logic
+- `.github/workflows/deploy.yml` builds, tests, and deploys to Pages
 
 ## Local usage
 
-Because this is a plain static site, you can open `index.html` directly or serve it with a simple HTTP server.
+```bash
+npm install
+npm run dev
+```
 
-## GitHub Pages
+## Test and build
 
-This project is designed to work directly from the repository root on GitHub Pages. Add a `.nojekyll` file if you want to keep Pages from applying Jekyll processing.
+```bash
+npm test
+npm run build
+```
+
+## Data source
+
+The expenditure split is based on the Ministry of Finance's `Budget at a Glance 2025-26` `Rupee Goes To` allocation.
+
+- https://www.indiabudget.gov.in/budget2025-26/doc/Budget_at_Glance/bag1.pdf
+- https://www.indiabudget.gov.in/
